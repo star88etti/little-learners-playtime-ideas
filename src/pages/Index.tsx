@@ -11,7 +11,6 @@ const Index = () => {
   const [previousGameIds, setPreviousGameIds] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [activeCategory, setActiveCategory] = useState('All');
-  const [activeAge, setActiveAge] = useState<number | null>(null);
   const { toast } = useToast();
 
   const handleNewGame = () => {
@@ -22,9 +21,9 @@ const Index = () => {
       // Get a new game
       const newGame = getRandomGame(previousGameIds);
       
-      // Filter by category and age if selected
+      // Filter by category if selected
       let filteredGame = newGame;
-      if (activeCategory !== 'All' || activeAge !== null) {
+      if (activeCategory !== 'All') {
         // Add current game to previous ids to avoid repeating
         setPreviousGameIds(prev => [...prev, newGame.id]);
         
@@ -34,9 +33,8 @@ const Index = () => {
         
         while (attempts < maxAttempts) {
           const categoryMatch = activeCategory === 'All' || filteredGame.category === activeCategory;
-          const ageMatch = activeAge === null || filteredGame.ageRange.includes(activeAge);
           
-          if (categoryMatch && ageMatch) {
+          if (categoryMatch) {
             break;
           }
           
@@ -71,20 +69,18 @@ const Index = () => {
   // Reset filters
   const resetFilters = () => {
     setActiveCategory('All');
-    setActiveAge(null);
   };
 
   // Apply filters effect
   useEffect(() => {
-    if (game && (activeCategory !== 'All' || activeAge !== null)) {
+    if (game && activeCategory !== 'All') {
       const categoryMatch = activeCategory === 'All' || game.category === activeCategory;
-      const ageMatch = activeAge === null || game.ageRange.includes(activeAge);
       
-      if (!categoryMatch || !ageMatch) {
+      if (!categoryMatch) {
         handleNewGame();
       }
     }
-  }, [activeCategory, activeAge]);
+  }, [activeCategory]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -95,8 +91,6 @@ const Index = () => {
           <FilterBar 
             activeCategory={activeCategory} 
             setActiveCategory={setActiveCategory}
-            activeAge={activeAge}
-            setActiveAge={setActiveAge}
           />
         )}
         

@@ -1,20 +1,15 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 interface FilterBarProps {
   activeCategory: string;
   setActiveCategory: (category: string) => void;
-  activeAge: number | null;
-  setActiveAge: (age: number | null) => void;
 }
 
 const FilterBar: React.FC<FilterBarProps> = ({
   activeCategory,
-  setActiveCategory,
-  activeAge,
-  setActiveAge
+  setActiveCategory
 }) => {
   const categories = [
     'All',
@@ -47,21 +42,6 @@ const FilterBar: React.FC<FilterBarProps> = ({
               </Button>
             ))}
           </div>
-        </div>
-        
-        <div>
-          <h3 className="text-sm font-medium mb-2 text-gray-600">Filter by age:</h3>
-          <ToggleGroup type="single" value={activeAge?.toString()} onValueChange={(value) => setActiveAge(value ? parseInt(value) : null)}>
-            <ToggleGroupItem value="2" className="rounded-l-full data-[state=on]:bg-montessori-green-light data-[state=on]:text-gray-800">
-              2 years
-            </ToggleGroupItem>
-            <ToggleGroupItem value="3" className="data-[state=on]:bg-montessori-green-light data-[state=on]:text-gray-800">
-              3 years
-            </ToggleGroupItem>
-            <ToggleGroupItem value="4" className="rounded-r-full data-[state=on]:bg-montessori-green-light data-[state=on]:text-gray-800">
-              4 years
-            </ToggleGroupItem>
-          </ToggleGroup>
         </div>
       </div>
     </div>
