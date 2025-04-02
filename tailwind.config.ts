@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,15 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				montessori: {
+					'wood': '#deb887',
+					'wood-light': '#d2b48c',
+					'green': '#a8c69f',
+					'green-light': '#d7e4c0',
+					'blue': '#b7d1e2',
+					'beige': '#f5f5dc',
+					'cream': '#f9f6f0'
 				}
 			},
 			borderRadius: {
@@ -84,11 +94,44 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(10px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
+				},
+				'bounce-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'scale(0.8)'
+					},
+					'70%': {
+						transform: 'scale(1.05)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'scale(1)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.5s ease-out',
+				'bounce-in': 'bounce-in 0.5s ease-out'
+			},
+			backgroundImage: {
+				'wood-pattern': "url('/wood-pattern.png')",
+				'paper-texture': "url('/paper-texture.png')"
+			},
+			fontFamily: {
+				'schoolbell': ['"Schoolbell"', 'cursive'],
+				'nunito': ['"Nunito"', 'sans-serif']
 			}
 		}
 	},
