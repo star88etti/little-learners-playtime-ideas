@@ -2,12 +2,15 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { MontessoriGame } from '@/data/types';
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+let genAI: GoogleGenerativeAI | null = null;
 
-if (!API_KEY) {
-  throw new Error('Missing VITE_GEMINI_API_KEY environment variable');
+try {
+  if (API_KEY) {
+    genAI = new GoogleGenerativeAI(API_KEY);
+  }
+} catch (error) {
+  console.error('Error initializing Gemini API:', error);
 }
-
-const genAI = new GoogleGenerativeAI(API_KEY);
 
 // Gemini configuration
 const GEMINI_CONFIG = {
@@ -29,6 +32,12 @@ export interface GameSuggestion {
 const EMOJIS = ["🎨", "🎮", "🎯", "🎲", "🧩", "🔢", "🎭", "🎪", "🎨", "🎯", "🎲", "🧩"];
 
 export async function generateMontessoriGame(): Promise<MontessoriGame> {
+  if (!genAI) {
+    throw new Error(
+      'Gemini API is not configured. Please contact the administrator.'
+    );
+  }
+
   const model = genAI.getGenerativeModel({ 
     model: GEMINI_CONFIG.model,
     generationConfig: {
@@ -88,7 +97,7 @@ Respond with a single JSON object (no markdown, no code blocks) with these exact
     };
   } catch (error) {
     console.error('Error generating game:', error);
-    throw new Error('Failed to generate game');
+    throw new Error('Failed to generate game. Please try again later.');
   }
 }
 

@@ -20,10 +20,13 @@ const Index = () => {
     } catch (error) {
       console.error('Error generating game:', error);
       toast({
-        title: "Error",
-        description: "Failed to generate a new game. Please try again.",
-        variant: "destructive"
+        title: "Unable to Generate Game",
+        description: error instanceof Error ? error.message : "An unexpected error occurred. Please try again later.",
+        variant: "destructive",
+        duration: 5000
       });
+      // Keep the current game if there's an error
+      setGame(game);
     } finally {
       setIsLoading(false);
     }
