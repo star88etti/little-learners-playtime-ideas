@@ -1,12 +1,22 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { MontessoriGame } from '@/data/types';
 
+// Debug logging for API key
+console.log('API Key status:', {
+  exists: !!import.meta.env.VITE_GEMINI_API_KEY,
+  isDefined: typeof import.meta.env.VITE_GEMINI_API_KEY !== 'undefined',
+  length: import.meta.env.VITE_GEMINI_API_KEY?.length || 0
+});
+
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 let genAI: GoogleGenerativeAI | null = null;
 
 try {
   if (API_KEY) {
     genAI = new GoogleGenerativeAI(API_KEY);
+    console.log('Gemini API initialized successfully');
+  } else {
+    console.error('No API key provided');
   }
 } catch (error) {
   console.error('Error initializing Gemini API:', error);
@@ -16,10 +26,18 @@ try {
 const GEMINI_CONFIG = {
   model: 'gemini-1.5-pro-002',
   maxOutputTokens: 2048,
-  temperature: 0.1,
-  topP: 1,
-  topK: 1
+  temperature: 0.9, // Increased for more variety
+  topP: 0.9,
+  topK: 40
 };
+
+// Categories with weights to ensure variety
+const CATEGORIES = [
+  { name: "Sensory", activities: ["texture exploration", "sound matching", "color sorting", "scent identification"] },
+  { name: "Practical Life", activities: ["pouring", "folding", "cleaning", "food preparation"] },
+  { name: "Math", activities: ["counting", "sorting", "matching", "patterns"] },
+  { name: "Science", activities: ["nature observation", "simple experiments", "classification", "weather"] }
+];
 
 // Rate limiting configuration
 const RATE_LIMIT = {
@@ -44,15 +62,9 @@ export async function generateMontessoriGame(): Promise<MontessoriGame> {
     );
   }
 
-  // Check rate limiting
-  const now = Date.now();
-  const timeSinceLastRequest = now - RATE_LIMIT.lastRequestTime;
-  if (timeSinceLastRequest < RATE_LIMIT.minDelayBetweenRequests) {
-    const waitTime = Math.ceil((RATE_LIMIT.minDelayBetweenRequests - timeSinceLastRequest) / 1000);
-    throw new Error(
-      `Please wait ${waitTime} seconds before generating another game. This helps us stay within API limits.`
-    );
-  }
+  // Select a random category and activity type
+  const category = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
+  const activity = category.activities[Math.floor(Math.random() * category.activities.length)];
 
   const model = genAI.getGenerativeModel({ 
     model: GEMINI_CONFIG.model,
@@ -64,24 +76,30 @@ export async function generateMontessoriGame(): Promise<MontessoriGame> {
     }
   });
 
-  const prompt = `You are a Montessori education expert. Create a new educational Montessori-inspired activity for young children.
-The activity should be:
+  const prompt = `You are a Montessori education expert. Create a new and unique educational Montessori-inspired activity for young children.
+
+Focus on a ${category.name} activity involving ${activity}.
+
+Requirements:
 - Age-appropriate (for ages 2-4)
 - Educational and fun
 - Easy to set up with common household materials
 - Include clear instructions
 - Follow Montessori principles of hands-on learning and independence
+- Must be DIFFERENT from any basic pom-pom or common activities
 
 Respond with a single JSON object (no markdown, no code blocks) with these exact fields:
 {
-  "title": "Activity title",
-  "intro": "2-3 sentences about the activity",
+  "title": "Creative and unique activity title",
+  "intro": "2-3 sentences about this specific activity",
   "setup": ["4-5 clear setup steps"],
-  "learningSkills": ["3-4 skills developed"],
-  "extensionIdeas": ["3 ways to extend or vary the activity"],
+  "learningSkills": ["3-4 specific skills developed"],
+  "extensionIdeas": ["3 creative ways to extend or vary the activity"],
   "materialsNeeded": ["list of required materials"],
-  "category": "one of: Sensory, Practical Life, Math, Science"
-}`;
+  "category": "${category.name}"
+}
+
+Make sure the activity is unique and creative, not a common or basic activity.`;
 
   try {
     const result = await model.generateContent(prompt);
