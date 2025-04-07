@@ -21,6 +21,12 @@ const GEMINI_CONFIG = {
   topK: 1
 };
 
+// Rate limiting configuration
+const RATE_LIMIT = {
+  lastRequestTime: 0,
+  minDelayBetweenRequests: 30000, // 30 seconds in milliseconds
+};
+
 export interface GameSuggestion {
   title: string;
   description: string;
@@ -35,6 +41,16 @@ export async function generateMontessoriGame(): Promise<MontessoriGame> {
   if (!genAI) {
     throw new Error(
       'Gemini API is not configured. Please contact the administrator.'
+    );
+  }
+
+  // Check rate limiting
+  const now = Date.now();
+  const timeSinceLastRequest = now - RATE_LIMIT.lastRequestTime;
+  if (timeSinceLastRequest < RATE_LIMIT.minDelayBetweenRequests) {
+    const waitTime = Math.ceil((RATE_LIMIT.minDelayBetweenRequests - timeSinceLastRequest) / 1000);
+    throw new Error(
+      `Please wait ${waitTime} seconds before generating another game. This helps us stay within API limits.`
     );
   }
 
@@ -72,6 +88,9 @@ Respond with a single JSON object (no markdown, no code blocks) with these exact
     const response = await result.response;
     let text = response.text();
     
+    // Update last request time after successful API call
+    RATE_LIMIT.lastRequestTime = Date.now();
+    
     // Clean up the response by removing any markdown formatting
     text = text.replace(/\`\`\`json\n?|\`\`\`\n?/g, '');
     text = text.trim();
@@ -96,6 +115,12 @@ Respond with a single JSON object (no markdown, no code blocks) with these exact
       aiGenerated: true
     };
   } catch (error) {
+    // Check if it's a rate limit error
+    if (error instanceof Error && error.message.includes('429')) {
+      RATE_LIMIT.lastRequestTime = Date.now(); // Update last request time on rate limit error
+      throw new Error('We\'ve hit the API rate limit. Please wait 30 seconds before trying again.');
+    }
+    
     console.error('Error generating game:', error);
     throw new Error('Failed to generate game. Please try again later.');
   }

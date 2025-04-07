@@ -1,4 +1,3 @@
-
 import React from 'react';
 import type { MontessoriGame } from '../data/gameData';
 import { Button } from '@/components/ui/button';
@@ -7,9 +6,10 @@ interface GameDisplayProps {
   game: MontessoriGame | null;
   onNewGame: () => void;
   isLoading: boolean;
+  cooldownSeconds: number;
 }
 
-const GameDisplay: React.FC<GameDisplayProps> = ({ game, onNewGame, isLoading }) => {
+const GameDisplay: React.FC<GameDisplayProps> = ({ game, onNewGame, isLoading, cooldownSeconds }) => {
   if (isLoading) {
     return (
       <div className="paper-card animate-pulse flex flex-col items-center justify-center min-h-[400px]">
@@ -32,8 +32,9 @@ const GameDisplay: React.FC<GameDisplayProps> = ({ game, onNewGame, isLoading })
         <Button 
           onClick={onNewGame} 
           className="bg-montessori-wood hover:bg-montessori-wood-light text-white font-medium py-2 px-6 rounded-full text-lg shadow-md transition-all duration-200 hover:shadow-lg"
+          disabled={cooldownSeconds > 0}
         >
-          Let's Play!
+          {cooldownSeconds > 0 ? `Wait ${cooldownSeconds}s` : "Let's Play!"}
         </Button>
       </div>
     );
@@ -103,6 +104,7 @@ const GameDisplay: React.FC<GameDisplayProps> = ({ game, onNewGame, isLoading })
         <Button 
           onClick={onNewGame} 
           className="bg-montessori-green hover:bg-montessori-green-light text-gray-800 font-medium py-2 px-6 rounded-full text-lg shadow-md transition-all duration-200 hover:shadow-lg flex items-center"
+          disabled={cooldownSeconds > 0}
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
             <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
@@ -110,7 +112,7 @@ const GameDisplay: React.FC<GameDisplayProps> = ({ game, onNewGame, isLoading })
             <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
             <path d="M16 21h5v-5"></path>
           </svg>
-          New Game
+          {cooldownSeconds > 0 ? `Wait ${cooldownSeconds}s` : "New Game"}
         </Button>
       </div>
     </div>
