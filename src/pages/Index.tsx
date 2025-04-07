@@ -47,6 +47,13 @@ const Index = () => {
       if (message.includes('wait') && message.includes('seconds')) {
         const waitTime = parseInt(message.match(/\d+/)?.[0] || '30');
         setCooldownSeconds(waitTime);
+        // Don't keep the current game for rate limit errors
+        if (message.includes('rate limit') || message.includes('API limit')) {
+          setGame(null);
+        }
+      } else {
+        // Keep the current game only for non-rate-limit errors
+        setGame(game);
       }
       
       toast({
@@ -55,8 +62,6 @@ const Index = () => {
         variant: "destructive",
         duration: 5000
       });
-      // Keep the current game if there's an error
-      setGame(game);
     } finally {
       setIsLoading(false);
     }
