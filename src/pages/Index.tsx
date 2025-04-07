@@ -1,36 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Header from '@/components/Header';
 import GameDisplay from '@/components/GameDisplay';
 import Footer from '@/components/Footer';
-import { getRandomGame, type MontessoriGame } from '@/data/gameData';
+import { type MontessoriGame } from '@/data/types';
 import { useToast } from '@/components/ui/use-toast';
+import { generateMontessoriGame } from '@/lib/gemini';
 
 const Index = () => {
   const [game, setGame] = useState<MontessoriGame | null>(null);
-  const [previousGameIds, setPreviousGameIds] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleNewGame = () => {
+  const handleNewGame = async () => {
     setIsLoading(true);
     
-    // Simulate loading
-    setTimeout(() => {
-      // Get a new game
-      const newGame = getRandomGame(previousGameIds);
-      
-      // Update game state and previous game ids
+    try {
+      const newGame = await generateMontessoriGame();
       setGame(newGame);
-      setPreviousGameIds(prev => {
-        if (prev.length > 25) {
-          // Keep the list manageable by removing oldest entries
-          return [...prev.slice(-24), newGame.id];
-        }
-        return [...prev, newGame.id];
+    } catch (error) {
+      console.error('Error generating game:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate a new game. Please try again.",
+        variant: "destructive"
       });
-      
+    } finally {
       setIsLoading(false);
-    }, 600);
+    }
   };
 
   return (

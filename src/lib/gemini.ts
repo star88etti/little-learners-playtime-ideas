@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { MontessoriGame } from '@/data/types';
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
@@ -8,6 +9,15 @@ if (!API_KEY) {
 
 const genAI = new GoogleGenerativeAI(API_KEY);
 
+// Gemini configuration
+const GEMINI_CONFIG = {
+  model: 'gemini-1.5-pro-002',
+  maxOutputTokens: 2048,
+  temperature: 0.1,
+  topP: 1,
+  topK: 1
+};
+
 export interface GameSuggestion {
   title: string;
   description: string;
@@ -16,11 +26,85 @@ export interface GameSuggestion {
   instructions: string[];
 }
 
+const EMOJIS = ["🎨", "🎮", "🎯", "🎲", "🧩", "🔢", "🎭", "🎪", "🎨", "🎯", "🎲", "🧩"];
+
+export async function generateMontessoriGame(): Promise<MontessoriGame> {
+  const model = genAI.getGenerativeModel({ 
+    model: GEMINI_CONFIG.model,
+    generationConfig: {
+      maxOutputTokens: GEMINI_CONFIG.maxOutputTokens,
+      temperature: GEMINI_CONFIG.temperature,
+      topP: GEMINI_CONFIG.topP,
+      topK: GEMINI_CONFIG.topK
+    }
+  });
+
+  const prompt = `You are a Montessori education expert. Create a new educational Montessori-inspired activity for young children.
+The activity should be:
+- Age-appropriate (for ages 2-4)
+- Educational and fun
+- Easy to set up with common household materials
+- Include clear instructions
+- Follow Montessori principles of hands-on learning and independence
+
+Respond with a single JSON object (no markdown, no code blocks) with these exact fields:
+{
+  "title": "Activity title",
+  "intro": "2-3 sentences about the activity",
+  "setup": ["4-5 clear setup steps"],
+  "learningSkills": ["3-4 skills developed"],
+  "extensionIdeas": ["3 ways to extend or vary the activity"],
+  "materialsNeeded": ["list of required materials"],
+  "category": "one of: Sensory, Practical Life, Math, Science"
+}`;
+
+  try {
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    let text = response.text();
+    
+    // Clean up the response by removing any markdown formatting
+    text = text.replace(/\`\`\`json\n?|\`\`\`\n?/g, '');
+    text = text.trim();
+    
+    // Parse the response and ensure it's valid JSON
+    const game = JSON.parse(text);
+    
+    // Validate required fields
+    const requiredFields = ['title', 'intro', 'setup', 'learningSkills', 'extensionIdeas', 'materialsNeeded', 'category'];
+    for (const field of requiredFields) {
+      if (!game[field]) {
+        throw new Error(`Missing required field: ${field}`);
+      }
+    }
+    
+    // Add additional fields
+    return {
+      ...game,
+      id: Date.now(), // Use timestamp as unique ID
+      emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
+      ageRange: [2, 3, 4],
+      aiGenerated: true
+    };
+  } catch (error) {
+    console.error('Error generating game:', error);
+    throw new Error('Failed to generate game');
+  }
+}
+
 export async function generateGameSuggestions(
   currentGames: GameSuggestion[],
   count: number = 3
 ): Promise<GameSuggestion[]> {
-  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+  const model = genAI.getGenerativeModel({ 
+    model: GEMINI_CONFIG.model,
+    generationConfig: {
+      maxOutputTokens: GEMINI_CONFIG.maxOutputTokens,
+      temperature: GEMINI_CONFIG.temperature,
+      topP: GEMINI_CONFIG.topP,
+      topK: GEMINI_CONFIG.topK
+    }
+  });
 
   const prompt = `
     Generate ${count} new educational playtime activities for young children.

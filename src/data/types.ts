@@ -1,4 +1,3 @@
-
 export interface MontessoriGame {
   id: number;
   title: string;
@@ -10,4 +9,5 @@ export interface MontessoriGame {
   materialsNeeded: string[];
   category: string;
   ageRange: number[];
+  aiGenerated?: boolean;
 }
