@@ -4,7 +4,7 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: mode === 'production' ? '/little-learners-playtime-ideas/' : '/',
+  base: '/little-learners-playtime-ideas/',
   server: {
     host: "::",
     port: 8080,
@@ -21,7 +21,9 @@ export default defineConfig(({ mode }) => ({
     emptyOutDir: true,
     rollupOptions: {
       output: {
-        manualChunks: undefined,
+        assetFileNames: 'assets/[name]-[hash][extname]',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
       },
     },
   },
