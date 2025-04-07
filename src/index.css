@@ -1,0 +1,85 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&family=Schoolbell&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 45 33% 97%;
+    --foreground: 35 10% 25%;
+
+    --card: 45 33% 99%;
+    --card-foreground: 35 10% 25%;
+
+    --popover: 45 33% 99%;
+    --popover-foreground: 35 10% 25%;
+
+    --primary: 35 60% 65%;
+    --primary-foreground: 35 10% 25%;
+
+    --secondary: 120 15% 70%;
+    --secondary-foreground: 35 10% 25%;
+
+    --muted: 30 10% 94%;
+    --muted-foreground: 35 5% 45%;
+
+    --accent: 200 30% 80%;
+    --accent-foreground: 35 10% 25%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 35 10% 85%;
+    --input: 35 10% 85%;
+    --ring: 35 60% 65%;
+
+    --radius: 1rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    /* ... keep existing code */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-montessori-cream text-foreground font-nunito;
+    background-image: url('/paper-texture.png');
+    background-repeat: repeat;
+  }
+  
+  h1, h2, h3, h4 {
+    @apply font-schoolbell;
+  }
+}
+
+@layer components {
+  .wood-panel {
+    @apply bg-montessori-wood rounded-lg border border-montessori-wood-light shadow-md;
+    background-image: url('/wood-pattern.png');
+    background-blend-mode: multiply;
+  }
+  
+  .paper-card {
+    @apply bg-montessori-beige rounded-lg border border-montessori-wood/20 shadow-md p-6;
+    background-image: url('/paper-texture.png');
+    background-blend-mode: overlay;
+  }
+}
