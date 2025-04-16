@@ -1,6 +1,7 @@
 import React from 'react';
-import type { MontessoriGame } from '../data/gameData';
+import type { MontessoriGame } from '../data/types';
 import { Button } from '@/components/ui/button';
+import { LoaderCircle } from 'lucide-react';
 
 interface GameDisplayProps {
   game: MontessoriGame | null;
@@ -12,12 +13,9 @@ interface GameDisplayProps {
 const GameDisplay: React.FC<GameDisplayProps> = ({ game, onNewGame, isLoading, cooldownSeconds }) => {
   if (isLoading) {
     return (
-      <div className="paper-card animate-pulse flex flex-col items-center justify-center min-h-[400px]">
-        <div className="w-64 h-8 bg-montessori-wood/20 rounded-lg mb-6"></div>
-        <div className="w-full h-4 bg-montessori-wood/20 rounded mb-4"></div>
-        <div className="w-full h-4 bg-montessori-wood/20 rounded mb-4"></div>
-        <div className="w-3/4 h-4 bg-montessori-wood/20 rounded mb-8"></div>
-        <div className="w-32 h-10 bg-montessori-green/30 rounded-lg"></div>
+      <div className="paper-card flex flex-col items-center justify-center min-h-[400px] animate-fade-in">
+        <LoaderCircle className="w-12 h-12 text-montessori-wood animate-spin mb-4" />
+        <p className="text-lg text-gray-600">Crafting your next activity...</p>
       </div>
     );
   }
