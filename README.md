@@ -1,18 +1,43 @@
 # Little Learners Playtime Ideas
 
-A web application for generating and managing educational playtime activities for young children.
+A Montessori-inspired activity generator for young children.
 
-## Getting Started
+## Environment Setup
 
-1. Clone this repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
+1. Copy `.env.example` to `.env`:
+```bash
+cp .env.example .env
+```
+
+2. Add your Gemini API key to `.env`:
+- Get an API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+- Add restrictions to your API key:
+  - HTTP referrer: `montessorigames.letstalkaitools.com`
+  - API restrictions: Only allow Gemini API
+- Add the key to your `.env` file:
+```bash
+VITE_GEMINI_API_KEY=your_api_key_here
+```
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+## Deployment
+
+The site is automatically deployed to GitHub Pages when changes are pushed to the main branch.
+
+### Environment Variables
+
+For deployment, add the following secret to your GitHub repository:
+- Name: `VITE_GEMINI_API_KEY`
+- Value: Your restricted Gemini API key
 
 ## Features
 
@@ -20,10 +45,6 @@ A web application for generating and managing educational playtime activities fo
 - Filter activities by age range
 - View detailed instructions and required materials
 - Save and manage favorite activities
-
-## Deployment
-
-This project is configured for automatic deployment to GitHub Pages. The deployment process is automated using GitHub Actions and will run whenever changes are pushed to the main branch.
 
 ### Manual Deployment
 
