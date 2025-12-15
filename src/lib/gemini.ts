@@ -24,7 +24,7 @@ try {
 
 // Gemini configuration
 const GEMINI_CONFIG = {
-  model: 'gemini-1.5-pro', // Using stable model name instead of version-specific
+  model: 'gemini-2.0-flash-lite', // Using flash lite model - faster and more available
   maxOutputTokens: 2048,
   temperature: 0.9, // Increased for more variety
   topP: 0.9,
